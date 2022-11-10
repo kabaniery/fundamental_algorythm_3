@@ -1,26 +1,32 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void quicksort (int b, int e, int **mass)
+void quicksort (int r, int *mass)
 {
-    int l = b, r = e, temp;
-    int piv = (*mass)[(l + r) / 2]; // Опорным элементом для примера возьмём средний
-    while (l <= r)
-    {
-        while ((*mass)[l] < piv)
-            l++;
-        while ((*mass)[r] > piv)
-            r--;
-        if (l <= r) {
-            temp = (*mass)[l++];
-            (*mass)[l++] = (*mass)[r--];
-            (*mass)[r--] = temp;
+    int left = 0, right = r - 1, middle = mass[(left + right) / 2], temp;
+
+    do {
+        while (mass[left] < middle) {
+            left++;
         }
+        while (mass[right] > middle) {
+            right--;
+        }
+        if (left <= right) {
+            temp = mass[left];
+            mass[left] = mass[right];
+            mass[right] = temp;
+            left++;
+            right--;
+        }
+    } while (left <= right);
+
+    if (left < r) {
+        quicksort(r - left, &mass[left]);
     }
-    if (b < r)
-        quicksort (b, r, mass);
-    if (e > l)
-        quicksort (l, e, mass);
+    if (right > 0) {
+        quicksort(right + 1, mass);
+    }
 }
 
 int getSochet(int n, int k) {
@@ -80,7 +86,7 @@ void func1(int **mass, int *length) {
     }
     //TODO: доделать быструю сортировку
 
-    //quicksort(0, *length - 1, mass);
+    quicksort(*length - 1, *mass);
 }
 
 void func2(int **mass, int *length) {
@@ -95,6 +101,7 @@ void func2(int **mass, int *length) {
         *mass = malloc(sizeof(int)*(*length));
         rF2(1,0, k, l, &index, mass);
     }
+    quicksort(*length - 1, *mass);
 }
 
 int main() {
